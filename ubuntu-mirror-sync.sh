@@ -1,20 +1,10 @@
-## Mirror Synchronization Script /usr/local/bin/ubuntu-mirror-sync.sh
-## Version 1.01 Updated 13 Feb 2007 by Peter Noble
+## Log File
+log=/var/log/ubuntu-mirror-sync.log
 
-## Point our log file to somewhere and setup our admin email
-log=/var/log/mirrorsync.log
-
-adminmail=admin@my.domain
-# Set to 0 if you do not want to receive email
-sendemail=1
-
-# Subject is the subject of our email
-subject="Ubuntu Mirror Sync Finished"
-
-## Setup the server to mirror
+## Mirror Server
 remote=rsync://archive.ubuntu.com/ubuntu
 
-## Setup the local directory / Our mirror
+## Local mirroe directory
 local=/media/mirror/ubuntu
 
 ## Initialize some other variables
@@ -38,6 +28,7 @@ while [[ "$complete" != "true" ]]; do
                 rsync -a --delete-after --progress $remote $local
                 status=$?
         else
+                echo "`date +%x-%R` - $pid - Running rsync" >> $log
                 rsync -a --delete-after $remote $local >> $log
                 status=$?
         fi
@@ -47,22 +38,6 @@ while [[ "$complete" != "true" ]]; do
                 (( failures += 1 ))
         else
                 echo "`date +%x-%R` - $pid - Finished Ubuntu Mirror Sync" >> $log
-
-                # Send the email
-                if [[ -x /usr/bin/mail && "$sendemail" -eq "1" ]]; then
-                mail -s "$subject" "$adminmail" <<OUTMAIL
-Summary of Ubuntu Mirror Synchronization
-PID: $pid
-Failures: $failures
-Finish Time: `date`
-
-Sincerely,
-$HOSTNAME
-
-OUTMAIL
-                fi
-        complete="true"
-        fi
-done
+echo "`date +%x-%R` - $pid - Script completed." >> $log
 
 exit 0

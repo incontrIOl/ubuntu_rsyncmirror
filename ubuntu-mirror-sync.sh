@@ -10,8 +10,8 @@ log=/var/log/ubuntu-mirror-sync.log
 ## Mirror Server
 remote=rsync://archive.ubuntu.com/ubuntu
 
-## Local mirroe directory
-local=/media/mirror/ubuntu
+## Local mirror directory
+local=/mirror/
 
 ## Initialize some other variables
 complete="false"
@@ -29,21 +29,16 @@ while [[ "$complete" != "true" ]]; do
                 sleep 5m
         fi
 
-        if [[ $1 == "debug" ]]; then
-                echo "Working on attempt number $failures"
-                rsync -a --delete-after --progress $remote $local
-                status=$?
-        else
-                echo "`date +%x-%R` - $pid - Running rsync" >> $log
-                rsync -a --delete-after $remote $local >> $log
-                status=$?
-        fi
+        echo "`date +%x-%R` - $pid - Running rsync" >> $log
+        rsync -a --delete-after $remote $local >> $log
+        status=$?
         
         if [[ $status -ne "0" ]]; then
                 complete="false"
                 (( failures += 1 ))
         else
                 echo "`date +%x-%R` - $pid - Finished Ubuntu Mirror Sync" >> $log
+
 echo "`date +%x-%R` - $pid - Script completed." >> $log
 
 exit 0

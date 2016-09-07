@@ -1,3 +1,9 @@
+#!/bin/bash
+
+# Install in:
+# /usr/local/bin/ubuntu-mirror-sync.sh
+
+
 ## Log File
 log=/var/log/ubuntu-mirror-sync.log
 
